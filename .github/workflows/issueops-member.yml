@@ -35,7 +35,7 @@ jobs:
         uses: issue-ops/parser@v4.2.0
         with:
           body: ${{ github.event.issue.body }}
-          issue-form-template: .github/ISSUE_TEMPLATE/member-add.yml
+          issue-form-template: member-add.yml
 
       - name: Output Issue JSON
         id: output-issue
