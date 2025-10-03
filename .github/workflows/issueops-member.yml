@@ -1,0 +1,42 @@
+name: IssueOps - Member Management
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-member-request:
+    # メンバー管理関連のラベルが付いているIssueのみ処理
+    if: |
+      contains(github.event.issue.labels.*.name, 'issueops:member-add')
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Determine operation type
+        id: determine_op
+        run: |
+          if echo '${{ toJson(github.event.issue.labels.*.name) }}' | jq -r '.[]' | grep -q 'issueops:member-add'; then
+            echo "operation=add" >> $GITHUB_OUTPUT
+            echo "operation_label=メンバー追加" >> $GITHUB_OUTPUT
+          else
+            echo "operation=unknown" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Parse Issue
+        id: parser
+        uses: issue-ops/parser@v4.2.0
+        with:
+          body: ${{ github.event.issue.body }}
+          issue-form-template: .github/ISSUE_TEMPLATE/member-add.yml
+
+      - name: Output Issue JSON
+        id: output-issue
+        run: echo ${{ steps.parser.outputs.json }}
