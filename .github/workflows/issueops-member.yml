@@ -2,7 +2,9 @@ name: IssueOps - Member Management
 
 on:
   issues:
-    types: [opened]
+    types: 
+      - opened
+      - edited
 
 jobs:
   process-member-request:
