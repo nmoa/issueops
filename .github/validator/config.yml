@@ -1,0 +1,5 @@
+validators:
+  - field: github_username
+    script: username.js
+  - field: email
+    script: email.js

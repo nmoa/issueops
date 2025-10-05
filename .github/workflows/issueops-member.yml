@@ -37,7 +37,15 @@ jobs:
           body: ${{ github.event.issue.body }}
           issue-form-template: member-add.yml
 
-      - name: Output Issue JSON
+      - name: Validate Issue
+        id: validator
+        uses: issue-ops/validator@v3.3.0
+        with:
+          issue-form-template: member-add.yml
+          parsed-issue-body: ${{ steps.parser.outputs.json }}
+          workspace: ${{ github.workspace }}
+
+      - name: Output Issue content
         id: output-issue
         run: |
           echo ${{ steps.parser.outputs.json }}
@@ -45,5 +53,4 @@ jobs:
           echo "email = ${{ steps.parser.outputs.parsed_email }}"
           echo "role = ${{ steps.parser.outputs.parsed_role }}"
           echo "teams = ${{ steps.parser.outputs.parsed_teams }}"
-          echo "reason = ${{ steps.parser.outputs.parsed_reason }}"
 
