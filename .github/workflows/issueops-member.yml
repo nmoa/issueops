@@ -6,6 +6,11 @@ on:
       - opened
       - edited
 
+# ワークフローが複数起動したら自動キャンセル
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   process-member-request:
     # メンバー管理関連のラベルが付いているIssueのみ処理
