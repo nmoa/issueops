@@ -8,7 +8,7 @@ on:
 
 # ワークフローが複数起動したら自動キャンセル
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
   cancel-in-progress: true
 
 jobs:
