@@ -24,8 +24,24 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Add eyes reaction
+        run: |
+          set -x
+          gh api --method POST \
+            -f content="eyes" \
+            "/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/reactions"
+
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm install
       
       - name: Determine operation type
         id: determine_op
