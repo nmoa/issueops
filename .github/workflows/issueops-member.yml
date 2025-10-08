@@ -69,24 +69,32 @@ jobs:
           issue-form-template: member-add.yml
           parsed-issue-body: ${{ steps.parser.outputs.json }}
           workspace: ${{ github.workspace }}
+          
+      - name: Remove existing status labels
+        uses: issue-ops/labeler@v3.0.0
+        with:
+          action: remove
+          issue_number: ${{ github.event.issue.number }}
+          label_patterns: |
+            status:*
 
-      - name: Add validation failed label
+      - name: Add status:pending label
+        if: steps.validator.outputs.result == 'success'
+        uses: issue-ops/labeler@v3.0.0
+        with:
+          action: add
+          issue_number: ${{ github.event.issue.number }}
+          labels: |
+            status:pending
+
+      - name: Add status:failed label
         if: steps.validator.outputs.result == 'failure'
         uses: issue-ops/labeler@v3.0.0
         with:
           action: add
           issue_number: ${{ github.event.issue.number }}
           labels: |
-            status:validation-failed
-
-      - name: Remove validation failed label
-        if: steps.validator.outputs.result == 'success'
-        uses: issue-ops/labeler@v3.0.0
-        with:
-          action: remove
-          issue_number: ${{ github.event.issue.number }}
-          labels: |
-            status:validation-failed
+            status:failed
 
       - name: Output Issue content
         if: steps.validator.outputs.result == 'success'
