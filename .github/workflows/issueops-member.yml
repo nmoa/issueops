@@ -73,7 +73,7 @@ jobs:
       - name: Output Issue content
         id: output-issue
         run: |
-          echo ${{ steps.parser.outputs.json }}
+          echo '${{ steps.parser.outputs.json }}'
           echo "github_username = ${{ steps.parser.outputs.parsed_github_username }}"
           echo "email = ${{ steps.parser.outputs.parsed_email }}"
           echo "role = ${{ steps.parser.outputs.parsed_role }}"

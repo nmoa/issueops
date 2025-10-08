@@ -40,7 +40,7 @@ export default async function validateUsername(username) {
 
     // GitHub APIを使用してユーザーが存在するかチェック
     try {
-        const response = await fetch(`https://api.github.com/users/${trimmedUsername}`, {
+        const response = await fetch(`https://api.github.com/users/${encodeURIComponent(trimmedUsername)}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/vnd.github+json',
