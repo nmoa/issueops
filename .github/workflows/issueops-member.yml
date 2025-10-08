@@ -70,7 +70,26 @@ jobs:
           parsed-issue-body: ${{ steps.parser.outputs.json }}
           workspace: ${{ github.workspace }}
 
+      - name: Add validation failed label
+        if: steps.validator.outputs.result == 'failure'
+        uses: issue-ops/labeler@v3.0.0
+        with:
+          action: add
+          issue_number: ${{ github.event.issue.number }}
+          labels: |
+            status:validation-failed
+
+      - name: Remove validation failed label
+        if: steps.validator.outputs.result == 'success'
+        uses: issue-ops/labeler@v3.0.0
+        with:
+          action: remove
+          issue_number: ${{ github.event.issue.number }}
+          labels: |
+            status:validation-failed
+
       - name: Output Issue content
+        if: steps.validator.outputs.result == 'success'
         id: output-issue
         run: |
           echo '${{ steps.parser.outputs.json }}'
