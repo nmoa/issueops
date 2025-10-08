@@ -69,7 +69,7 @@ jobs:
           issue-form-template: member-add.yml
           parsed-issue-body: ${{ steps.parser.outputs.json }}
           workspace: ${{ github.workspace }}
-          
+
       - name: Remove existing status labels
         uses: issue-ops/labeler@v3.0.0
         with:
@@ -94,7 +94,7 @@ jobs:
           action: add
           issue_number: ${{ github.event.issue.number }}
           labels: |
-            status:failed
+            status:validation-failed
 
       - name: Output Issue content
         if: steps.validator.outputs.result == 'success'
