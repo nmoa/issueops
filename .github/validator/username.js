@@ -26,13 +26,8 @@ export default async function validateUsername(username) {
     // - 英数字とハイフン(-)のみ
     // - ハイフンで始まったり終わったりしない
     // - 連続したハイフンは使用不可
-    const isValidFormat =
-        trimmedUsername.length >= 1 &&
-        trimmedUsername.length <= 39 &&
-        /^[a-zA-Z0-9-]+$/.test(trimmedUsername) &&
-        !trimmedUsername.startsWith('-') &&
-        !trimmedUsername.endsWith('-') &&
-        !trimmedUsername.includes('--')
+    const gitHubUserNameRegex = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
+    const isValidFormat = gitHubUserNameRegex.test(trimmedUsername)
 
     if (!isValidFormat) {
         return 'ユーザー名が有効な形式ではありません（1-39文字、英数字とハイフンのみ、ハイフンは先頭・末尾・連続使用不可）'
