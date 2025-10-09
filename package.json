@@ -5,6 +5,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "@octokit/rest": "^22.0.0",
     "validator": "^13.15.15"
   }
 }

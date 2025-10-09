@@ -1,3 +1,5 @@
+import { Octokit } from '@octokit/rest'
+
 /**
  * GitHubユーザー名の形式をバリデーションし、ユーザーが実際に存在するかをチェックする
  * 
@@ -26,6 +28,7 @@ export default async function validateUsername(username) {
     // - 英数字とハイフン(-)のみ
     // - ハイフンで始まったり終わったりしない
     // - 連続したハイフンは使用不可
+    // cf. https://github.com/shinnn/github-username-regex
     const gitHubUserNameRegex = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
     const isValidFormat = gitHubUserNameRegex.test(trimmedUsername)
 
@@ -35,33 +38,25 @@ export default async function validateUsername(username) {
 
     // GitHub APIを使用してユーザーが存在するかチェック
     try {
-        const response = await fetch(`https://api.github.com/users/${encodeURIComponent(trimmedUsername)}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/vnd.github+json',
-                'User-Agent': 'IssueOps-Validator'
-            }
+        const octokit = new Octokit()
+
+        const { data } = await octokit.users.getByUsername({
+            username: trimmedUsername
         })
 
-        if (response.status === 404) {
-            return `GitHubユーザー '${trimmedUsername}' が見つかりません。ユーザー名を確認してください`
-        }
-
-        if (!response.ok) {
-            return `GitHubユーザーの確認中にエラーが発生しました (ステータス: ${response.status})`
-        }
-
-        // ユーザーが存在することを確認
-        const userData = await response.json()
-
         // アカウントが削除されている場合などのチェック
-        if (userData.type !== 'User' && userData.type !== 'Organization') {
+        if (data.type !== 'User' && data.type !== 'Organization') {
             return `'${trimmedUsername}' は有効なGitHubユーザーアカウントではありません`
         }
 
         return 'success'
     } catch (error) {
-        // ネットワークエラーなどの場合
+        // ユーザーが見つからない場合
+        if (error.status === 404) {
+            return `GitHubユーザー '${trimmedUsername}' が見つかりません。ユーザー名を確認してください`
+        }
+
+        // その他のエラー
         return `GitHubユーザーの確認中にエラーが発生しました: ${error.message}`
     }
 }
