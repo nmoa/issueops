@@ -73,7 +73,7 @@ export default async function validateUsername(username) {
         core.info(`Checking if user '${trimmedUsername}' is already in members.yaml`)
         const workspace = core.getInput('workspace', { required: true })
         const yamlPath = `${workspace}/.github/validator/config.yml`
-        const content = fs.readFileSync(yamlPath, 'utf8')
+        const content = readFileSync(yamlPath, 'utf8')
         const data = YAML.parse(content)
 
         core.info(`Parsed YAML data: ${JSON.stringify(data)}`)
