@@ -6,10 +6,30 @@
 <!--prettier-ignore-start-->
 <!--markdownlint-disable MD034-->
 
+### 申請サマリー
+
 | 項目 | 値 |
 | ---- | --- |
-{{#each issue}}
-| `{{@key}}` | {{{newlines this}}} |
+| GitHubユーザー名 | `{{issue.github_username}}` |
+| メールアドレス | `{{issue.email}}` |
+| ロール | `{{issue.role.[0]}}` |
+{{#if issue.reason}}
+| 申請理由 | {{{newlines issue.reason}}} |
+{{else}}
+| 申請理由 | _未記入_ |
+{{/if}}
+
+### 追加するチーム
+
+{{{linesToMarkdownTable issue.teams "チーム名" "_指定なし_"}}}
+
+{{#if issue.confirmation.selected.length}}
+### 確認事項
+
+{{#each issue.confirmation.selected}}
+- {{this}}
 {{/each}}
+{{/if}}
 
 <!--prettier-ignore-end-->
+<!--markdownlint-enable MD034-->

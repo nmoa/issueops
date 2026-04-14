@@ -3,3 +3,6 @@ validators:
     script: username.js
   - field: email
     script: email.js
+helpers:
+  - name: linesToMarkdownTable
+    script: lines-to-markdown-table.js
