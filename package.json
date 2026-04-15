@@ -4,6 +4,7 @@
   "description": "IssueOps custom validators for member management",
   "type": "module",
   "private": true,
+  "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@octokit/rest": "^22.0.0",

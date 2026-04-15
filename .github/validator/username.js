@@ -1,41 +1,41 @@
 /**
- * GitHubユーザー名の形式をバリデーションし、以下をチェックする:
- * 1. ユーザー名の形式が正しいか
- * 2. ユーザーが実際に存在するか
- * 3. ユーザーがmembers.yamlに既に登録されていないか
- * 
- * GitHubユーザー名のルール:
- * - 1-39文字
- * - 英数字とハイフン(-)のみ使用可能
- * - ハイフンで始まったり終わったりできない
- * - 連続したハイフンは使用できない
- * 
- * @param {string} username - バリデーション対象のGitHubユーザー名
- * @returns {Promise<string>} 'success' または エラーメッセージ
+ * Validate a GitHub username and check the following:
+ * 1. The username format is valid.
+ * 2. The user actually exists.
+ * 3. The user is not already registered in members.yaml.
+ *
+ * GitHub username rules:
+ * - 1 to 39 characters
+ * - Only letters, numbers, and hyphens (-)
+ * - Cannot start or end with a hyphen
+ * - Cannot contain consecutive hyphens
+ *
+ * @param {string} username - The GitHub username to validate.
+ * @returns {Promise<string>} 'success' or an error message.
  */
 export default async function validateUsername(username) {
-    // 空文字チェック
+    // Require a non-empty string.
     if (!username || typeof username !== 'string') {
-        return 'GitHubユーザー名が入力されていません'
+        return 'GitHub username is required'
     }
 
-    // 前後の空白を除去
+    // Trim surrounding whitespace before validation.
     const trimmedUsername = username.trim()
 
-    // GitHubユーザー名の形式チェック
-    // - 1-39文字
-    // - 英数字とハイフン(-)のみ
-    // - ハイフンで始まったり終わったりしない
-    // - 連続したハイフンは使用不可
+    // Validate the GitHub username format.
+    // - 1 to 39 characters
+    // - Letters, numbers, and hyphens (-) only
+    // - Cannot start or end with a hyphen
+    // - Cannot contain consecutive hyphens
     // cf. https://github.com/shinnn/github-username-regex
     const gitHubUserNameRegex = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
     const isValidFormat = gitHubUserNameRegex.test(trimmedUsername)
 
     if (!isValidFormat) {
-        return 'ユーザー名が有効な形式ではありません（1-39文字、英数字とハイフンのみ、ハイフンは先頭・末尾・連続使用不可）'
+        return 'Username format is invalid (1-39 characters; letters, numbers, and single hyphens only; hyphens cannot be leading, trailing, or repeated)'
     }
 
-    // @octokit/restを使用してGitHub APIにアクセス
+    // Use @octokit/rest to access the GitHub API.
     const { Octokit } = await import('@octokit/rest')
     const core = await import('@actions/core')
     const { readFileSync } = await import('fs')
@@ -46,7 +46,7 @@ export default async function validateUsername(username) {
     })
 
     try {
-        // 1. GitHubユーザーが存在するかチェック
+        // 1. Check whether the GitHub user exists.
         core.info(`Checking if user '${trimmedUsername}' exists`)
 
         let userData
@@ -57,19 +57,19 @@ export default async function validateUsername(username) {
             userData = userResponse.data
         } catch (error) {
             if (error.status === 404) {
-                return `GitHubユーザー '${trimmedUsername}' が見つかりません。ユーザー名を確認してください`
+                return `GitHub user '${trimmedUsername}' was not found. Check the username and try again`
             }
             throw error
         }
 
-        // アカウントタイプのチェック
+        // Check the account type.
         if (userData.type !== 'User') {
-            return `'${trimmedUsername}' は有効なGitHubユーザーアカウントではありません（タイプ: ${userData.type}）`
+            return `'${trimmedUsername}' is not a valid GitHub user account (type: ${userData.type})`
         }
 
         core.info(`User '${trimmedUsername}' exists`)
 
-        // 2. yamlを読み込む
+        // 2. Load the YAML file.
         core.info(`Checking if user '${trimmedUsername}' is already in members.yaml`)
         const workspace = core.getInput('workspace', { required: true })
         const yamlPath = `${workspace}/.github/validator/config.yml`
@@ -88,7 +88,7 @@ export default async function validateUsername(username) {
         //     )
 
         //     if (existingMember) {
-        //         return `ユーザー '${trimmedUsername}' は既に members.yaml に登録されています`
+        //         return `User '${trimmedUsername}' is already registered in members.yaml`
         //     }
 
         //     core.info(`User '${trimmedUsername}' is not in members.yaml`)
@@ -98,8 +98,8 @@ export default async function validateUsername(username) {
 
         return 'success'
     } catch (error) {
-        // その他のエラー
+        // Any other validation error.
         core.error(`Validation error: ${error.message}`)
-        return `バリデーション中にエラーが発生しました: ${error.message}`
+        return `An error occurred during validation: ${error.message}`
     }
 }

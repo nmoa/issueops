@@ -1,25 +1,25 @@
 import validator from 'validator'
 
 /**
- * メールアドレスの形式をバリデーションする
- * 
- * validator.jsライブラリを使用してメールアドレス形式をチェック
- * 
- * @param {string} email - バリデーション対象のメールアドレス
- * @returns {string} 'success' または エラーメッセージ
+ * Validate the email address format.
+ *
+ * Uses validator.js to check whether the value is a valid email address.
+ *
+ * @param {string} email - The email address to validate.
+ * @returns {string} 'success' or an error message.
  */
 export default function validateEmail(email) {
-    // 空文字チェック
+    // Require a non-empty string.
     if (!email || typeof email !== 'string') {
-        return 'メールアドレスが入力されていません'
+        return 'Email address is required'
     }
 
-    // 前後の空白を除去
+    // Trim surrounding whitespace before validation.
     const trimmedEmail = email.trim()
 
-    // validator.jsを使用してメールアドレス形式をチェック
+    // Use validator.js for the email format check.
     if (!validator.isEmail(trimmedEmail)) {
-        return 'メールアドレスの形式が正しくありません（例: user@example.com）'
+        return 'Email address format is invalid (example: user@example.com)'
     }
 
     return 'success'

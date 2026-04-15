@@ -1,30 +1,30 @@
-## :tada: **リクエストを受け付けました**
+## :tada: **Request received**
 
-リクエストを受け付けました。以下はリクエストから抽出された内容です。
-この内容に基づいて、申請の作成を進めます。
+The request has been received. The details extracted from the issue are shown below.
+Processing will continue based on this information.
 
 <!--prettier-ignore-start-->
 <!--markdownlint-disable MD034-->
 
-### 申請サマリー
+### Request Summary
 
-| 項目 | 値 |
+| Field | Value |
 | ---- | --- |
-| GitHubユーザー名 | `{{issue.github_username}}` |
-| メールアドレス | `{{issue.email}}` |
-| ロール | `{{issue.role.[0]}}` |
+| GitHub Username | `{{issue.github_username}}` |
+| Email Address | `{{issue.email}}` |
+| Role | `{{issue.role.[0]}}` |
 {{#if issue.reason}}
-| 申請理由 | {{{newlines issue.reason}}} |
+| Request Reason | {{{newlines issue.reason}}} |
 {{else}}
-| 申請理由 | _未記入_ |
+| Request Reason | _Not provided_ |
 {{/if}}
 
-### 追加するチーム
+### Teams to Add
 
-{{{linesToMarkdownTable issue.teams "チーム名" "_指定なし_"}}}
+{{{linesToMarkdownTable issue.teams "Team" "_Not specified_"}}}
 
 {{#if issue.confirmation.selected.length}}
-### 確認事項
+### Confirmation
 
 {{#each issue.confirmation.selected}}
 - {{this}}
